@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/safecontrol-task/static/css/main.65cdc797.css",
+    "main.js": "/safecontrol-task/static/js/main.14a2cc1b.js",
+    "index.html": "/safecontrol-task/index.html",
+    "main.65cdc797.css.map": "/safecontrol-task/static/css/main.65cdc797.css.map",
+    "main.14a2cc1b.js.map": "/safecontrol-task/static/js/main.14a2cc1b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.65cdc797.css",
+    "static/js/main.14a2cc1b.js"
+  ]
+}
