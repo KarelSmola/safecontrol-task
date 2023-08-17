@@ -1,16 +1,20 @@
 import React from "react";
+import TableHeaderSort from "./TableHeaderSort";
 
 import classes from "./TableHead.module.css";
 
-const TableHead = ({ columns }) => {
+const TableHead = ({ columns, sorting, onSortTable }) => {
   return (
     <thead>
       {
         <tr>
           {columns.map((column) => (
-            <th className={classes["head-cell"]} key={column}>
-              {column}
-            </th>
+            <TableHeaderSort
+              key={column}
+              column={column}
+              sorting={sorting}
+              onSortTable={onSortTable}
+            />
           ))}
         </tr>
       }
