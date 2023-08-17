@@ -28,10 +28,18 @@ color: 'blue'
 - Hlavička tabulky bude naimplementována jako samostatná React komponenta.
 
 - Naopak řádek tabulky NEbude naimplementován jako samostatná React komponenta.
+  📝 poznámka
+  Tady nevvím jestli jsem to správně pochopil. Tělo tabulky jsem umístil pod TableHead componentu přímo do App.js. Raději bych, ale udělal TableContent komponentu a do ní místil tělo tabulky.
+
+---
 
 - Po kliknutí na buňku ji obarvěte barvou určenou barevným identifikátorem z dat. Po opětovném kliknutí ji odbarvěte. Najednou může být obarveno více řádků.
 
 - Nad tabulku dejte input který bude sloužit pro filtrování dat pro tabulku. Pokud je input prázdný, jsou zobrazena všechna data. Prázdné mezery před a za hodnotou v inputu se musí při filtrování ignorovat.
+  📝 poznámka
+  Filtrování jsem zvolil na základě sloupce Title a použil jsem startsWitch method. Možná by tomu více slušelo includes?
+
+---
 
 - Nad tabulkou vypisujte čárkou oddělené IDčka řádků, které jsou podbarvené.
 
