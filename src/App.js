@@ -1,21 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import generatedItems from "./data/data";
+import IDlist from "./components/IDlist";
+import InputSearch from "./components/InputSearch";
 import TableHead from "./components/TableHead";
 
 const App = () => {
   const [items, setItems] = useState(generatedItems);
   const [sorting, setSorting] = useState({ column: "title", order: "asc" });
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(items);
 
   const columns = ["id", "title", "description"];
 
-  const selectRow = (item) => {
-    console.log(item);
+  const selectRow = (selectedItem) => {
+    const selectedRow = items.map((curItem) => {
+      if (curItem.id === selectedItem.id) {
+        return curItem.selected === false
+          ? { ...selectedItem, selected: true }
+          : { ...selectedItem, selected: false };
+      } else {
+        return curItem;
+      }
+    });
+
+    setItems(selectedRow);
   };
 
   const sortTable = (newSorting) => {
     setSorting(newSorting);
   };
-  console.log(sorting);
+
   let sortedItems;
 
   if (sorting.column === "title" && sorting.order === "asc")
@@ -52,27 +66,51 @@ const App = () => {
       .slice()
       .sort((item1, item2) => item2.id.localeCompare(item1.id));
 
+  useEffect(() => {
+    if (searchText.length) {
+      const filterData = items.filter((item) =>
+        item.title.toLowerCase().startsWith(searchText.toLowerCase())
+      );
+      setFilteredData(filterData);
+    } else {
+      setFilteredData([]);
+    }
+  }, [searchText, items]);
+
   return (
-    <table className="table">
-      <TableHead columns={columns} sorting={sorting} onSortTable={sortTable} />
-      <tbody>
-        {sortedItems.map((item) => (
-          <tr
-            key={item.id}
-            className="table-row"
-            onClick={() => {
-              selectRow(item);
-            }}
-          >
-            {columns.map((column) => (
-              <td key={column} className="table-cell">
-                {item[column]}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      <IDlist ids={items} />
+      <InputSearch searchText={searchText} onSearchText={setSearchText} />
+      <table className="table">
+        <TableHead
+          columns={columns}
+          sorting={sorting}
+          onSortTable={sortTable}
+        />
+        <tbody>
+          {sortedItems.map((item) => (
+            <tr
+              key={item.id}
+              className="table-row"
+              style={
+                item.selected
+                  ? { backgroundColor: item.color }
+                  : { backgroundColor: "transparent" }
+              }
+              onClick={() => {
+                selectRow(item);
+              }}
+            >
+              {columns.map((column) => (
+                <td key={column} className="table-cell">
+                  {item[column]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 };
 
