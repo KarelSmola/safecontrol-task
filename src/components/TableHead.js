@@ -5,7 +5,7 @@ import classes from "./TableHead.module.css";
 
 const TableHead = ({ columns, sorting, onSortTable }) => {
   return (
-    <thead>
+    <thead className={classes["table-head"]}>
       {
         <tr>
           {columns.map((column) => (

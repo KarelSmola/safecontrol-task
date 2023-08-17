@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import generatedItems from "./data/data";
+import MainWrapper from "./components/UI/MainWrapper";
 import IDlist from "./components/IDlist";
 import InputSearch from "./components/InputSearch";
 import TableHead from "./components/TableHead";
@@ -78,7 +79,7 @@ const App = () => {
   }, [searchText, items]);
 
   return (
-    <>
+    <MainWrapper>
       <IDlist ids={items} />
       <InputSearch searchText={searchText} onSearchText={setSearchText} />
       <table className="table">
@@ -88,29 +89,50 @@ const App = () => {
           onSortTable={sortTable}
         />
         <tbody>
-          {sortedItems.map((item) => (
-            <tr
-              key={item.id}
-              className="table-row"
-              style={
-                item.selected
-                  ? { backgroundColor: item.color }
-                  : { backgroundColor: "transparent" }
-              }
-              onClick={() => {
-                selectRow(item);
-              }}
-            >
-              {columns.map((column) => (
-                <td key={column} className="table-cell">
-                  {item[column]}
-                </td>
+          {filteredData.length
+            ? filteredData.map((filteredItem) => (
+                <tr
+                  key={filteredItem.id}
+                  className="table-row"
+                  style={
+                    filteredItem.selected
+                      ? { backgroundColor: filteredItem.color }
+                      : { backgroundColor: "transparent" }
+                  }
+                  onClick={() => {
+                    selectRow(filteredItem);
+                  }}
+                >
+                  {columns.map((column) => (
+                    <td key={column} className="table-cell">
+                      {filteredItem[column]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            : sortedItems.map((item) => (
+                <tr
+                  key={item.id}
+                  className="table-row"
+                  style={
+                    item.selected
+                      ? { backgroundColor: item.color }
+                      : { backgroundColor: "transparent" }
+                  }
+                  onClick={() => {
+                    selectRow(item);
+                  }}
+                >
+                  {columns.map((column) => (
+                    <td key={column} className="table-cell">
+                      {item[column]}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
         </tbody>
       </table>
-    </>
+    </MainWrapper>
   );
 };
 
