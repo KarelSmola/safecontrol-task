@@ -5,16 +5,16 @@ import IDlist from "./components/IDlist";
 import InputSearch from "./components/InputSearch";
 import TableHead from "./components/TableHead";
 
+const columns = ["id", "title", "description"];
+
 const App = () => {
   const [items, setItems] = useState(generatedItems);
   const [sorting, setSorting] = useState({ column: "title", order: "asc" });
   const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState(items);
-
-  const columns = ["id", "title", "description"];
 
   const selectRow = (selectedItem) => {
     const selectedRow = items.map((curItem) => {
+      console.log(selectedItem.id);
       if (curItem.id === selectedItem.id) {
         return curItem.selected === false
           ? { ...selectedItem, selected: true }
@@ -23,7 +23,6 @@ const App = () => {
         return curItem;
       }
     });
-
     setItems(selectedRow);
   };
 
@@ -31,7 +30,7 @@ const App = () => {
     setSorting(newSorting);
   };
 
-  let sortedItems;
+  let sortedItems = null;
 
   if (sorting.column === "title" && sorting.order === "asc")
     sortedItems = items
@@ -72,9 +71,9 @@ const App = () => {
       const filterData = items.filter((item) =>
         item.title.toLowerCase().startsWith(searchText.toLowerCase())
       );
-      setFilteredData(filterData);
+      setItems(filterData);
     } else {
-      setFilteredData([]);
+      setItems(generatedItems);
     }
   }, [searchText, items]);
 
@@ -89,28 +88,28 @@ const App = () => {
           onSortTable={sortTable}
         />
         <tbody>
-          {filteredData.length
-            ? filteredData.map((filteredItem) => (
+          {sortedItems
+            ? sortedItems.map((sortedItem) => (
                 <tr
-                  key={filteredItem.id}
+                  key={sortedItem.id}
                   className="table-row"
                   style={
-                    filteredItem.selected
-                      ? { backgroundColor: filteredItem.color }
+                    sortedItem.selected
+                      ? { backgroundColor: sortedItem.color }
                       : { backgroundColor: "transparent" }
                   }
                   onClick={() => {
-                    selectRow(filteredItem);
+                    selectRow(sortedItem);
                   }}
                 >
                   {columns.map((column) => (
                     <td key={column} className="table-cell">
-                      {filteredItem[column]}
+                      {sortedItem[column]}
                     </td>
                   ))}
                 </tr>
               ))
-            : sortedItems.map((item) => (
+            : items.map((item) => (
                 <tr
                   key={item.id}
                   className="table-row"

@@ -3,6 +3,10 @@ import React from "react";
 import classes from "./InputSearch.module.css";
 
 const InputSearch = ({ searchText, onSearchText }) => {
+  const inputChangeHandler = (e) => {
+    onSearchText(e.target.value);
+  };
+
   return (
     <div className={classes["label-box"]}>
       <label className={classes.label} htmlFor="search">
@@ -12,9 +16,7 @@ const InputSearch = ({ searchText, onSearchText }) => {
         className={classes.input}
         id="search"
         value={searchText}
-        onChange={(e) => {
-          onSearchText(e.target.value);
-        }}
+        onChange={inputChangeHandler}
       />
     </div>
   );
