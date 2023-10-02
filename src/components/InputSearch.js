@@ -2,7 +2,7 @@ import React from "react";
 
 import classes from "./InputSearch.module.css";
 
-const InputSearch = ({ searchText, onSearchText }) => {
+export const InputSearch = ({ searchText, onSearchText }) => {
   const inputChangeHandler = (e) => {
     onSearchText(e.target.value);
   };
@@ -21,5 +21,3 @@ const InputSearch = ({ searchText, onSearchText }) => {
     </div>
   );
 };
-
-export default InputSearch;

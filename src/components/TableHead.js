@@ -2,12 +2,8 @@ import React from "react";
 
 import classes from "./TableHead.module.css";
 
-const TableHead = ({ requestSorting, sortConfig }) => {
-  console.log(sortConfig);
-
+export const TableHead = ({ requestSorting, sortConfig }) => {
   const getArrow = (name) => {
-    console.log(name);
-
     if (!sortConfig) {
       return;
     }
@@ -52,5 +48,3 @@ const TableHead = ({ requestSorting, sortConfig }) => {
     </thead>
   );
 };
-
-export default TableHead;

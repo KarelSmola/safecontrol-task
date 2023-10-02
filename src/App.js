@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import generatedItems from "./data/data";
-import MainWrapper from "./components/UI/MainWrapper";
-import IDlist from "./components/IDlist";
-import InputSearch from "./components/InputSearch";
-import TableHead from "./components/TableHead";
+import { MainWrapper } from "./components/UI/MainWrapper";
+import { IDlist } from "./components/IDlist";
+import { InputSearch } from "./components/InputSearch";
+import { TableHead } from "./components/TableHead";
 
 const columns = ["id", "title", "description"];
 
@@ -25,11 +25,11 @@ const App = () => {
     setItems(selectedRow);
   };
 
-  const sortableItems = useMemo(() => {
-    let sortedItems = [...items];
+  const sortedItems = useMemo(() => {
+    let sortableItems = [...items];
 
     if (sortConfig !== null) {
-      sortedItems.sort((a, b) => {
+      sortableItems.sort((a, b) => {
         if (a[sortConfig.column] < b[sortConfig.column]) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
@@ -40,7 +40,7 @@ const App = () => {
         return 0;
       });
     }
-    return sortedItems;
+    return sortableItems;
   }, [items, sortConfig]);
 
   const requestSort = (column) => {
@@ -58,14 +58,14 @@ const App = () => {
 
   useEffect(() => {
     if (searchText.length) {
-      const filterData = items.filter((item) =>
-        item.title.toLowerCase().startsWith(searchText.toLowerCase()),
-      );
+      let filterData = sortedItems.filter((item) => {
+        return item.title.toLowerCase().startsWith(searchText.toLowerCase());
+      });
       setItems(filterData);
     } else {
       setItems(generatedItems);
     }
-  }, [searchText, items]);
+  }, [searchText, sortedItems]);
 
   return (
     <MainWrapper>
@@ -74,7 +74,7 @@ const App = () => {
       <table className="table">
         <TableHead requestSorting={requestSort} sortConfig={sortConfig} />
         <tbody>
-          {sortableItems.map((item) => (
+          {sortedItems.map((item) => (
             <tr
               key={item.id}
               className="table-row"
