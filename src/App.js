@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import generatedItems from "./data/data";
 import MainWrapper from "./components/UI/MainWrapper";
 import IDlist from "./components/IDlist";
@@ -9,12 +9,11 @@ const columns = ["id", "title", "description"];
 
 const App = () => {
   const [items, setItems] = useState(generatedItems);
-  const [sorting, setSorting] = useState({ column: "title", order: "asc" });
   const [searchText, setSearchText] = useState("");
+  const [sortConfig, setSortConfig] = useState(null);
 
   const selectRow = (selectedItem) => {
     const selectedRow = items.map((curItem) => {
-      console.log(selectedItem.id);
       if (curItem.id === selectedItem.id) {
         return curItem.selected === false
           ? { ...selectedItem, selected: true }
@@ -26,50 +25,41 @@ const App = () => {
     setItems(selectedRow);
   };
 
-  const sortTable = (newSorting) => {
-    setSorting(newSorting);
+  const sortableItems = useMemo(() => {
+    let sortedItems = [...items];
+
+    if (sortConfig !== null) {
+      sortedItems.sort((a, b) => {
+        if (a[sortConfig.column] < b[sortConfig.column]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.column] > b[sortConfig.column]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+
+        return 0;
+      });
+    }
+    return sortedItems;
+  }, [items, sortConfig]);
+
+  const requestSort = (column) => {
+    let direction = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.column === column &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
+    }
+
+    setSortConfig({ direction, column });
   };
-
-  let sortedItems = null;
-
-  if (sorting.column === "title" && sorting.order === "asc")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) => item1.title.localeCompare(item2.title));
-
-  if (sorting.column === "title" && sorting.order === "des")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) => item2.title.localeCompare(item1.title));
-
-  if (sorting.column === "description" && sorting.order === "asc")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) =>
-        item1.description.localeCompare(item2.description)
-      );
-
-  if (sorting.column === "description" && sorting.order === "des")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) =>
-        item2.description.localeCompare(item1.description)
-      );
-
-  if (sorting.column === "id" && sorting.order === "asc")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) => item1.id.localeCompare(item2.id));
-
-  if (sorting.column === "id" && sorting.order === "des")
-    sortedItems = items
-      .slice()
-      .sort((item1, item2) => item2.id.localeCompare(item1.id));
 
   useEffect(() => {
     if (searchText.length) {
       const filterData = items.filter((item) =>
-        item.title.toLowerCase().startsWith(searchText.toLowerCase())
+        item.title.toLowerCase().startsWith(searchText.toLowerCase()),
       );
       setItems(filterData);
     } else {
@@ -82,53 +72,28 @@ const App = () => {
       <IDlist ids={items} />
       <InputSearch searchText={searchText} onSearchText={setSearchText} />
       <table className="table">
-        <TableHead
-          columns={columns}
-          sorting={sorting}
-          onSortTable={sortTable}
-        />
+        <TableHead requestSorting={requestSort} sortConfig={sortConfig} />
         <tbody>
-          {sortedItems
-            ? sortedItems.map((sortedItem) => (
-                <tr
-                  key={sortedItem.id}
-                  className="table-row"
-                  style={
-                    sortedItem.selected
-                      ? { backgroundColor: sortedItem.color }
-                      : { backgroundColor: "transparent" }
-                  }
-                  onClick={() => {
-                    selectRow(sortedItem);
-                  }}
-                >
-                  {columns.map((column) => (
-                    <td key={column} className="table-cell">
-                      {sortedItem[column]}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            : items.map((item) => (
-                <tr
-                  key={item.id}
-                  className="table-row"
-                  style={
-                    item.selected
-                      ? { backgroundColor: item.color }
-                      : { backgroundColor: "transparent" }
-                  }
-                  onClick={() => {
-                    selectRow(item);
-                  }}
-                >
-                  {columns.map((column) => (
-                    <td key={column} className="table-cell">
-                      {item[column]}
-                    </td>
-                  ))}
-                </tr>
+          {sortableItems.map((item) => (
+            <tr
+              key={item.id}
+              className="table-row"
+              style={
+                item.selected
+                  ? { backgroundColor: item.color }
+                  : { backgroundColor: "transparent" }
+              }
+              onClick={() => {
+                selectRow(item);
+              }}
+            >
+              {columns.map((column) => (
+                <td key={column} className="table-cell">
+                  {item[column]}
+                </td>
               ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </MainWrapper>

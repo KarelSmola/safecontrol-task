@@ -1,3 +1,22 @@
 .table-head {
   background-color: #ddd;
 }
+
+thead th {
+
+  border: 2px solid #000;
+  padding: 1rem;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+}
+
+thead th.ascending::after {
+  content: "👇";
+  display: inline-block;
+}
+
+thead th.descending::after {
+  content: "☝️";
+  display: inline-block;
+}

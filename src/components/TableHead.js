@@ -1,21 +1,52 @@
 import React from "react";
-import TableHeaderSort from "./TableHeaderSort";
 
 import classes from "./TableHead.module.css";
 
-const TableHead = ({ columns, sorting, onSortTable }) => {
+const TableHead = ({ requestSorting, sortConfig }) => {
+  console.log(sortConfig);
+
+  const getArrow = (name) => {
+    console.log(name);
+
+    if (!sortConfig) {
+      return;
+    }
+
+    if (sortConfig.column === name) {
+      return sortConfig.direction === "ascending"
+        ? `${classes.ascending}`
+        : `${classes.descending}`;
+    }
+  };
+
   return (
     <thead className={classes["table-head"]}>
       {
         <tr>
-          {columns.map((column) => (
-            <TableHeaderSort
-              key={column}
-              column={column}
-              sorting={sorting}
-              onSortTable={onSortTable}
-            />
-          ))}
+          <th
+            className={getArrow("id")}
+            onClick={() => {
+              requestSorting("id");
+            }}
+          >
+            ID
+          </th>
+          <th
+            className={getArrow("title")}
+            onClick={() => {
+              requestSorting("title");
+            }}
+          >
+            Title
+          </th>
+          <th
+            className={getArrow("description")}
+            onClick={() => {
+              requestSorting("description");
+            }}
+          >
+            Description
+          </th>
         </tr>
       }
     </thead>
