@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import generatedItems from "./data/data";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { generatedItems } from "./data/data";
 import { MainWrapper } from "./components/UI/MainWrapper";
 import { IDlist } from "./components/IDlist";
 import { InputSearch } from "./components/InputSearch";
@@ -22,26 +22,51 @@ const App = () => {
         return curItem;
       }
     });
+
     setItems(selectedRow);
   };
 
-  const sortedItems = useMemo(() => {
-    let sortableItems = [...items];
+  const selectColumn = (selectedColumn) => {
+    console.log(selectedColumn);
+
+    items.map((curItem) => {
+      console.log(curItem);
+
+      return {
+        ...curItem,
+        selectedColumn: { ...curItem[selectedColumn], selectedColumn: true },
+      };
+    });
+  };
+  console.log(items);
+
+  const sortedAndFilteredItems = useMemo(() => {
+    let sortableAndFilteredItems = [...items];
 
     if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        if (a[sortConfig.column] < b[sortConfig.column]) {
+      sortableAndFilteredItems.sort((a, b) => {
+        const { name: name_a } = a[sortConfig.column];
+        const { name: name_b } = b[sortConfig.column];
+
+        if (name_a < name_b) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[sortConfig.column] > b[sortConfig.column]) {
+        if (name_a > name_b) {
           return sortConfig.direction === "ascending" ? 1 : -1;
         }
 
         return 0;
       });
     }
-    return sortableItems;
-  }, [items, sortConfig]);
+
+    if (searchText.length) {
+      sortableAndFilteredItems = items.filter((item) =>
+        item.title.toLowerCase().startsWith(searchText.toLowerCase()),
+      );
+    }
+
+    return sortableAndFilteredItems;
+  }, [items, sortConfig, searchText]);
 
   const requestSort = (column) => {
     let direction = "ascending";
@@ -56,17 +81,6 @@ const App = () => {
     setSortConfig({ direction, column });
   };
 
-  useEffect(() => {
-    if (searchText.length) {
-      let filterData = sortedItems.filter((item) => {
-        return item.title.toLowerCase().startsWith(searchText.toLowerCase());
-      });
-      setItems(filterData);
-    } else {
-      setItems(generatedItems);
-    }
-  }, [searchText, sortedItems]);
-
   return (
     <MainWrapper>
       <IDlist ids={items} />
@@ -74,9 +88,9 @@ const App = () => {
       <table className="table">
         <TableHead requestSorting={requestSort} sortConfig={sortConfig} />
         <tbody>
-          {sortedItems.map((item) => (
+          {sortedAndFilteredItems.map((item) => (
             <tr
-              key={item.id}
+              key={item.id.name}
               className="table-row"
               style={
                 item.selected
@@ -88,8 +102,14 @@ const App = () => {
               }}
             >
               {columns.map((column) => (
-                <td key={column} className="table-cell">
-                  {item[column]}
+                <td
+                  key={column}
+                  className="table-cell"
+                  onClick={() => {
+                    selectColumn(column);
+                  }}
+                >
+                  {item[column].name}
                 </td>
               ))}
             </tr>
