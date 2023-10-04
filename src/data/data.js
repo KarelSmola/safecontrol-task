@@ -19,6 +19,12 @@ const colorIdents = [
   },
 ];
 
+export const colorIdentsMap = {}
+
+colorIdents.forEach(identObject=>{
+  colorIdentsMap[identObject.ident] = identObject.props.color
+})
+
 export const generatedItems = Array.from({ length: 10 }, (_, i) => {
   return {
     id: { name: crypto.randomUUID(), color: "orange", selectedColumn: false },
@@ -36,8 +42,8 @@ export const generatedItems = Array.from({ length: 10 }, (_, i) => {
       color: "pink",
       selectedColumn: false,
     },
-    color:
-      colorIdents[Math.floor(Math.random() * colorIdents.length)].props.color,
+    color: colorIdents[Math.floor(Math.random() * colorIdents.length)].props.color,
+    colorIdent: colorIdents[Math.floor(Math.random() * colorIdents.length)].ident,
     selected: false,
   };
 });
